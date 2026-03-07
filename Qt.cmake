@@ -152,23 +152,23 @@ function(myqt_add_resource_directory target folder basedir)
     target_sources("${target}" PRIVATE ${src} ${gen} ${rcc})
 endfunction()
 
-function(myqt_create_executable target)
-    set(options)
-    set(single OUTDIR)
-    set(multi USES LIBRARIES)
-    cmake_parse_arguments(arg "${options}" "${single}" "${multi}" ${ARGV})
+macro(myqt_create_executable target)
+    set(_options)
+    set(_single OUTDIR)
+    set(_multi USES LIBRARIES)
+    cmake_parse_arguments(_arg "${_options}" "${_single}" "${_multi}" ${ARGV})
 
-    if(NOT arg_OUTDIR OR "${arg_OUTDIR}" STREQUAL "")
-        set(arg_OUTDIR "${CMAKE_BINARY_DIR}/_bin")
+    if(NOT _arg_OUTDIR OR "${_arg_OUTDIR}" STREQUAL "")
+        set(_arg_OUTDIR "${CMAKE_BINARY_DIR}/_bin")
     endif()
 
     add_executable("${target}" WIN32)
     set_target_properties("${target}" PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${arg_OUTDIR}"
+        RUNTIME_OUTPUT_DIRECTORY "${_arg_OUTDIR}"
         CXX_SCAN_FOR_MODULES FALSE
         )
 
-    find_package(Qt6 COMPONENTS ${arg_USES} REQUIRED)
-    target_link_libraries("${target}" ${arg_LIBRARIES})
-    _myqt_use_libraries("${target}" "${arg_OUTDIR}" ${arg_USES})
-endfunction()
+    find_package(Qt6 COMPONENTS ${_arg_USES} REQUIRED)
+    target_link_libraries("${target}" ${_arg_LIBRARIES})
+    _myqt_use_libraries("${target}" "${_arg_OUTDIR}" ${_arg_USES})
+endmacro()
