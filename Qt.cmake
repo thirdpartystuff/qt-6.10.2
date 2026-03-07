@@ -154,7 +154,7 @@ endfunction()
 
 macro(myqt_create_executable target)
     set(_options)
-    set(_single OUTDIR)
+    set(_single OUTDIR OUTPUT_NAME)
     set(_multi USES LIBRARIES)
     cmake_parse_arguments(_arg "${_options}" "${_single}" "${_multi}" ${ARGV})
 
@@ -167,6 +167,12 @@ macro(myqt_create_executable target)
         RUNTIME_OUTPUT_DIRECTORY "${_arg_OUTDIR}"
         CXX_SCAN_FOR_MODULES FALSE
         )
+
+    if(_arg_OUTPUT_NAME)
+        set_target_properties("${target}" PROPERTIES
+            OUTPUT_NAME "${_arg_OUTPUT_NAME}"
+            )
+    endif()
 
     find_package(Qt6 COMPONENTS ${_arg_USES} REQUIRED)
     target_link_libraries("${target}" ${_arg_LIBRARIES})
