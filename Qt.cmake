@@ -39,7 +39,7 @@ endfunction()
 function(_myqt_resources_unity out_prefix gen_cpp)
     set(counter 1)
     set(out "${out_prefix}")
-    foreach(file ${ARGN})
+    foreach(file IN LISTS ARGN)
         get_filename_component(full "${file}" ABSOLUTE)
         set(out "${out}\n")
         set(out "${out}#define qt_resource_name qt_resource_name_${counter}\n")
@@ -88,7 +88,7 @@ function(myqt_add_source_directory target folder basedir)
         )
 
     set(src)
-    foreach(file ${glob})
+    foreach(file IN LISTS glob)
         _myqt_include_source_file("${basedir}" "${folder}" "${file}")
         if(ext STREQUAL ".h")
             file(READ "${basedir}/${file}" contents)
@@ -106,7 +106,7 @@ function(myqt_add_source_directory target folder basedir)
     list(LENGTH rcc num2)
     if("${num1}" GREATER 0 OR "${num2}" GREATER 0)
         set(out)
-        foreach(file ${moc})
+        foreach(file IN LISTS moc)
             get_filename_component(full "${file}" ABSOLUTE)
             set(out "${out}#include \"${full}\"\n")
         endforeach()
@@ -132,7 +132,7 @@ function(myqt_add_resource_directory target folder basedir)
         )
 
     set(src)
-    foreach(file ${glob})
+    foreach(file IN LISTS glob)
         _myqt_include_source_file("${basedir}" "${folder}" "${file}")
         if(ext STREQUAL ".qrc")
             qt6_add_resources(rcc "${basedir}/${file}")
@@ -162,11 +162,17 @@ macro(myqt_create_executable target)
         set(_arg_OUTDIR "${CMAKE_BINARY_DIR}/_bin")
     endif()
 
-    add_executable("${target}" WIN32)
+    add_executable("${target}")
     set_target_properties("${target}" PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${_arg_OUTDIR}"
         CXX_SCAN_FOR_MODULES FALSE
         )
+
+    if(Gui IN_LIST _arg_USES)
+        set_target_properties("${target}" PROPERTIES
+            WIN32_EXECUTABLE TRUE
+            )
+    endif()
 
     if(_arg_OUTPUT_NAME)
         set_target_properties("${target}" PROPERTIES
