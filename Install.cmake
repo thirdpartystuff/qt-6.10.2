@@ -44,6 +44,11 @@ function(_myqt_use_libraries target outdir)
                     styles/qmodernwindowsstyle
                     )
             endif()
+            if("${lib}" STREQUAL "Qt6::Network")
+                _myqt_install_plugins("${target}" "${outdir}" "${file}"
+                    tls/qschannelbackend
+                    )
+            endif()
         endif()
         target_link_libraries("${target}" "${lib}")
     endforeach()
